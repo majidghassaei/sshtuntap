@@ -12,6 +12,11 @@ from easycli import SubCommand, Argument, Root
 
 from .console import info, ok, error, warning
 from .linux import shell
+if sys.platform == 'linux':
+    from . import linux as network
+else:
+    from . import mac as network
+
 
 
 
@@ -137,12 +142,14 @@ class ConnectCommand(SubCommand):
 
         while infinite or (c > 0):
             try:
-                shell(f'ip route replace {hostaddr} via {gateway}')
+                network.addroute(hostaddr,gateway)
+#                shell(f'ip route replace {hostaddr} via {gateway}')
                 shell(f'ip route replace default via {serveraddr}')
                 shell(
                     f'sudo -u {localuser} ssh {remoteuser}@{hostname} ' \
                     f'-Nw {index}:{index} {" ".join(sshargs)}'
                 )
+
             except CalledProcessError as ex:
                 if ex.returncode < 0:
                     break
