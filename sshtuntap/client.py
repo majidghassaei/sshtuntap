@@ -142,9 +142,8 @@ class ConnectCommand(SubCommand):
 
         while infinite or (c > 0):
             try:
-                network.addroute(hostaddr,gateway)
-#                shell(f'ip route replace {hostaddr} via {gateway}')
-                shell(f'ip route replace default via {serveraddr}')
+                network.replaceroute(gateway, hostaddr)
+                network.replaceroute(gateway=serveraddr)
                 shell(
                     f'sudo -u {localuser} ssh {remoteuser}@{hostname} ' \
                     f'-Nw {index}:{index} {" ".join(sshargs)}'
@@ -162,8 +161,8 @@ class ConnectCommand(SubCommand):
                 time.sleep(3)
 
             finally:
-                shell(f'ip route del {hostaddr} via {gateway}', check=False)
-                shell(f'ip route replace default via {gateway}', check=False)
+                deleteroute(hostaddr, gateway)
+                replaceroute(gateway, check=False)
 
             time.sleep(1)
             c -= 1
@@ -188,16 +187,13 @@ class ConnectCommand(SubCommand):
             error(f'Invalid default gateway: {gateway}')
 
         try:
-            shell(f'ip tuntap add mode tun dev {ifname} user {localuser} group {localuser}')
-            shell(
-                f'ip address add dev {ifname} {clientaddr}/{netmask} ' \
-                f'peer {serveraddr}/{netmask}'
-            )
-            shell(f'ip link set up dev {ifname}')
+            network.addtuntap(ifname, localuser):
+            network.addip(ifname, clientaddr, netmask, serveraddr)
+            network.setlink(ifname)
             self.connect(gateway, hostaddr, hostname, args)
         finally:
             info('Terminating...')
-            shell(f'ip tuntap delete mode tun dev {ifname}', check=False)
+            network.deletetuntap(ifname)
 
 
 class ClientRoot(Root):

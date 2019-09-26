@@ -14,44 +14,36 @@ def shell(cmd, check=True):
     return sp.run(cmd, shell=True, check=check)  #, stdout=sp.PIPE, stderr=sp.PIPE)
 
 
-def addroute(*args, **kwargs):
-    #To be implemented
+def replaceroute(gateway, hostaddr='default', check=True):
+    shell(f'ip route replace {hostaddr} via {gateway}', check=check)
     pass
 
 
-def replaceroute(*args, **kwargs):
-    #To be implemented
+def deleteroute(hostaddr, gateway):
+    shell(f'ip route del {hostaddr} via {gateway}', check=False)
     pass
 
 
-def ssh(*args, **kwargs):
-    #To be implemented
+def addtuntap(ifname, localuser):
+    shell(f'ip tuntap add mode tun dev {ifname} user ' \
+          f'{localuser} group {localuser}')
     pass
 
 
-def deleteroute(*args, **kwargs):
-    #To be implemented
+def addip(ifname, clientaddr, netmask, serveraddr):
+    shell(
+        f'ip address add dev {ifname} {clientaddr}/{netmask} ' \
+        f'peer {serveraddr}/{netmask}'
+    )
     pass
 
 
-def addtuntap(*args, **kwargs):
-    #To be implemented
+def setlink(ifname):
+    shell(f'ip link set up dev {ifname}')
     pass
 
 
-def addip(*args, **kwargs):
-    #To be implemented
+def deletetuntap(ifname):
+    shell(f'ip tuntap delete mode tun dev {ifname}', check=False)
     pass
-
-
-def setlink(*args, **kwargs):
-    #To be implemented
-    pass
-
-
-def deletetuntap(*args, **kwargs):
-    #To be implemented
-    pass
-
-
 
