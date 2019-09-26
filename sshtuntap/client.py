@@ -1,4 +1,5 @@
 import os
+import sys
 import time
 import socket
 import struct
@@ -16,7 +17,6 @@ if sys.platform == 'linux':
     from . import linux as network
 else:
     from . import mac as network
-
 
 
 
@@ -161,8 +161,8 @@ class ConnectCommand(SubCommand):
                 time.sleep(3)
 
             finally:
-                deleteroute(hostaddr, gateway)
-                replaceroute(gateway, check=False)
+                network.deleteroute(hostaddr, gateway)
+                network.replaceroute(gateway, check=False)
 
             time.sleep(1)
             c -= 1
@@ -187,7 +187,7 @@ class ConnectCommand(SubCommand):
             error(f'Invalid default gateway: {gateway}')
 
         try:
-            network.addtuntap(ifname, localuser):
+            network.addtuntap(ifname, localuser)
             network.addip(ifname, clientaddr, netmask, serveraddr)
             network.setlink(ifname)
             self.connect(gateway, hostaddr, hostname, args)

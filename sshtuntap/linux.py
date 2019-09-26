@@ -15,35 +15,29 @@ def shell(cmd, check=True):
 
 
 def replaceroute(gateway, hostaddr='default', check=True):
-    shell(f'ip route replace {hostaddr} via {gateway}', check=check)
-    pass
+    return shell(f'ip route replace {hostaddr} via {gateway}', check=check)
 
 
 def deleteroute(hostaddr, gateway):
-    shell(f'ip route del {hostaddr} via {gateway}', check=False)
-    pass
+    return shell(f'ip route del {hostaddr} via {gateway}', check=False)
 
 
 def addtuntap(ifname, localuser):
-    shell(f'ip tuntap add mode tun dev {ifname} user ' \
+    return shell(f'ip tuntap add mode tun dev {ifname} user ' \
           f'{localuser} group {localuser}')
-    pass
 
 
 def addip(ifname, clientaddr, netmask, serveraddr):
-    shell(
-        f'ip address add dev {ifname} {clientaddr}/{netmask} ' \
-        f'peer {serveraddr}/{netmask}'
-    )
-    pass
+    return shell(
+               f'ip address add dev {ifname} {clientaddr}/{netmask} ' \
+               f'peer {serveraddr}/{netmask}'
+           )
 
 
 def setlink(ifname):
-    shell(f'ip link set up dev {ifname}')
-    pass
+    return shell(f'ip link set up dev {ifname}')
 
 
 def deletetuntap(ifname):
-    shell(f'ip tuntap delete mode tun dev {ifname}', check=False)
-    pass
+    return shell(f'ip tuntap delete mode tun dev {ifname}', check=False)
 
